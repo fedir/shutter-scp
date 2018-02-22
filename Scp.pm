@@ -83,7 +83,10 @@ sub upload {
         $upload_filename =~ m/\/([^\/]*$)/;
         my $file = $1;
 
-        my $target_filename = $username . "/" . $file;
+        my @set = ('0' ..'9', 'A' .. 'Z', 'a' .. 'z');
+        my $random_hash = join '' => map $set[rand @set], 1 .. 20;
+
+        my $target_filename = $username . "/" . $random_hash . $file;
         $target_filename =~ s/ /\\ /g;
 
         my @args = ("scp", $upload_filename, $target_filename);
