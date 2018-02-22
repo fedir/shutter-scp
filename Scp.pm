@@ -2,6 +2,7 @@
 ###################################################
 #
 #  Copyright (C) 2012 Christian Weiske <cweiske@cweiske.de>
+#  Copyright (C) 2018 Fedir RYKHTIK
 #
 #  This file is part of Shutter.
 #
