@@ -39,12 +39,12 @@ my $d = Locale::gettext->domain("shutter-upload-plugins");
 $d->dir( $ENV{'SHUTTER_INTL'} );
 
 my %upload_plugin_info = (
-    'module'       => "Scp",
-    'url'          => "",
-    'registration' => "",
-    'description'  => $d->get( "Copy photos via scp. Use user as remote path, password as URL base" ),
-    'supports_anonymous_upload'  => FALSE,
-    'supports_authorized_upload' => TRUE,
+	'module'       => "Scp",
+	'url'          => "",
+	'registration' => "",
+	'description'  => $d->get( "Copy photos via scp. Use user as remote path, password as URL base" ),
+	'supports_anonymous_upload'  => FALSE,
+	'supports_authorized_upload' => TRUE,
 );
 
 binmode( STDOUT, ":utf8" );
@@ -67,7 +67,7 @@ sub new {
 
 sub init {
 	my $self = shift;
-        use URI::Escape;
+	use URI::Escape;
 	return TRUE;
 }
 
@@ -81,25 +81,26 @@ sub upload {
 	utf8::encode $password;
 	utf8::encode $username;
 
-        $upload_filename =~ m/\/([^\/]*$)/;
-        my $file = $1;
+	my @set = ('0' ..'9', 'A' .. 'Z', 'a' .. 'z');
+	my $random_hash = join '' => map $set[rand @set], 1 .. 20;
+	
+	$upload_filename =~ m/\/([^\/]*$)/;
+	my $file = $random_hash ."_" . $1;
 
-        my @set = ('0' ..'9', 'A' .. 'Z', 'a' .. 'z');
-        my $random_hash = join '' => map $set[rand @set], 1 .. 20;
 
-        my $target_filename = $username . "/" . $random_hash . $file;
-        $target_filename =~ s/ /\\ /g;
+	my $target_filename = $username . "/" . $file;
+	$target_filename =~ s/ /\\ /g;
 
-        my @args = ("scp", $upload_filename, $target_filename);
-        system(@args);
-        if ($? == 0) {
-            #status: success
-            $self->{_links}{'status'} = 200;
-            $self->{_links}{'url'} = $password . uri_escape($file);
-        } else {
-            #status: error
-            $self->{_links}{'status'} = "exec failed: @args / $?";
-        }
+	my @args = ("scp", $upload_filename, $target_filename);
+	system(@args);
+	if ($? == 0) {
+		#status: success
+		$self->{_links}{'status'} = 200;
+		$self->{_links}{'url'} = $password . uri_escape($file);
+	} else {
+		#status: error
+		$self->{_links}{'status'} = "exec failed: @args / $?";
+	}
 	#and return links
 	return %{ $self->{_links} };
 }
